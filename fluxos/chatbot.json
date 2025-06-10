@@ -1,0 +1,671 @@
+{
+  "name": "chatbot",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "webhook",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        880,
+        0
+      ],
+      "id": "3330db28-46b7-4d74-8e4f-85492d55b81f",
+      "name": "Webhook",
+      "webhookId": "cadd09cf-3507-4c7d-b85e-57f2f471a015"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "21006793-5ad2-48b0-aa9a-d64b627e9cf3",
+              "name": "session",
+              "value": "={{ $('Webhook').item.json.body.session }}",
+              "type": "string"
+            },
+            {
+              "id": "ec6bca56-29c6-4e81-81fe-e1a5184e581f",
+              "name": "chatId",
+              "value": "={{ $('Webhook').item.json.body.payload.from }}",
+              "type": "string"
+            },
+            {
+              "id": "d199e616-9772-48d1-8cd6-fdb8b820e7b3",
+              "name": "pushName",
+              "value": "={{ $('Webhook').item.json.body.payload._data.Info.PushName }}",
+              "type": "string"
+            },
+            {
+              "id": "466fbac7-2a10-405e-9bda-ba69b18a8294",
+              "name": "payloadId",
+              "value": "={{ $('Webhook').item.json.body.payload.id }}",
+              "type": "string"
+            },
+            {
+              "id": "18a86d59-fade-4461-a7bb-270801a174c4",
+              "name": "event",
+              "value": "={{ $('Webhook').item.json.body.event }}",
+              "type": "string"
+            },
+            {
+              "id": "710022ae-6828-4b3c-b9ca-ed52204f035d",
+              "name": "message",
+              "value": "={{ $('Webhook').item.json.body.payload.body }}",
+              "type": "string"
+            },
+            {
+              "id": "39769a81-ce60-4d6b-85b8-8854332b6a98",
+              "name": "fromMe",
+              "value": "={{ $('Webhook').item.json.body.payload.fromMe }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1120,
+        -80
+      ],
+      "id": "0fc3f08c-1de2-41ac-9764-dbceb5724396",
+      "name": "dados"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.event }}",
+                    "rightValue": "message",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "8e0656d3-e277-4f1b-a5fa-86f1247f71d0"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1300,
+        -80
+      ],
+      "id": "161ecbf5-5183-437a-bdf7-9b0c5376adfc",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message }}",
+        "options": {
+          "systemMessage": "=Você é um assistente virtual que atende usuários via WhatsApp com foco em informações sobre vendas. Seu papel é responder de forma clara, objetiva e amigável, utilizando linguagem natural e acessível.\n\nAs solicitações mais comuns incluem:\n\nTotal de vendas no mês\n\nFaturamento do dia (somando o valor das vendas realizadas)\n\nComparação de faturamento entre o ano atual e o anterior\n\nComparação de vendas entre o mês atual e o mês anterior\n\nAo apresentar valores, utilize a formatação monetária adequada (ex: R$ 1.250,00) e destaque os números de forma que fiquem visuais e compreensíveis.\n\nSempre que possível, forneça contexto adicional que possa auxiliar na tomada de decisões, como variações percentuais, tendências e observações relevantes. Mantenha um tom leve, prestativo e profissional.\n\nSeu banco de dados é esse aqui: {{ $json.content }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        1860,
+        0
+      ],
+      "id": "06294119-cde6-48b5-a5fd-d1b85599512b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('dados').item.json.chatId }}",
+        "sessionTTL": 900,
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryRedisChat",
+      "typeVersion": 1.5,
+      "position": [
+        1980,
+        200
+      ],
+      "id": "bf686876-9b7d-437b-8358-2d001185aea0",
+      "name": "Redis Chat Memory",
+      "credentials": {
+        "redis": {
+          "id": "ty4uB0gOfLvKNJq6",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "={{ $('dados').item.json.session }}",
+        "chatId": "={{ $('Code').item.json.chatId }}",
+        "text": "={{ $('AI Agent').item.json.output }}",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        3020,
+        0
+      ],
+      "id": "9e2ed1a6-4dd9-412d-be12-2bc27fc966f5",
+      "name": "enviar mensagem",
+      "credentials": {
+        "wahaApi": {
+          "id": "ZvtcjSRygP1xcHDZ",
+          "name": "WAHA account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Seen",
+        "session": "={{ $('dados').item.json.session }}",
+        "chatId": "={{ $('Code').item.json.chatId }}",
+        "messageId": "={{ $('dados').item.json.payloadId }}",
+        "participant": "",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        2840,
+        0
+      ],
+      "id": "b2bec906-a21b-43e9-9333-c9dc76200b00",
+      "name": "visualizar mensagem",
+      "credentials": {
+        "wahaApi": {
+          "id": "ZvtcjSRygP1xcHDZ",
+          "name": "WAHA account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n    MONTH(dtVenda) AS Mes,\n    YEAR(dtVenda) AS Ano,\n    SUM(vlVenda) AS TotalVendas,\n    nmFilial AS \"Nome Filial\",\n    DAY(dtVenda) as Dia\nFROM tbVendasDashboard\nWHERE \n    YEAR(dtVenda) IN (YEAR(GETDATE()), YEAR(GETDATE()) - 1)\n    AND vlVenda IS NOT NULL\nGROUP BY \n    YEAR(dtVenda), MONTH(dtVenda), nmFilial, DAY(dtVenda)\nORDER BY \n    Ano, Mes;"
+      },
+      "type": "n8n-nodes-base.microsoftSql",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        120
+      ],
+      "id": "51697cec-5d12-4fe7-bdce-a349438ce3fe",
+      "name": "Consulta para verificar o valor da venda do dia atual está preenchida",
+      "credentials": {
+        "microsoftSql": {
+          "id": "nFBSJqeOZaLoIp71",
+          "name": "Microsoft SQL account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const vendasFormatadas = items.map((item) => {\n  const { Mes, Ano, TotalVendas, \"Nome Filial\": nmFilial, Dia } = item.json;\n  return `Filial: ${nmFilial} | Ano: ${Ano} | Mês: ${Mes} | Dia: ${Dia} | Total de Vendas: R$ ${parseFloat(TotalVendas).toFixed(2)}`;\n});\n\nreturn [\n  {\n    json: {\n      content: vendasFormatadas.join('\\n')\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1300,
+        120
+      ],
+      "id": "088416b9-f285-41f0-a34c-a70e0032478d",
+      "name": "Formatando dados vindos do banco"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        1540,
+        0
+      ],
+      "id": "8cb44301-8128-4367-950e-d926597c7e5b",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\n\nreturn [{\n  json: {\n    message: String(item.json.message || ''),\n    content: typeof item.json.content === 'string'\n      ? item.json.content\n      : JSON.stringify(item.json.content || '')\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1700,
+        0
+      ],
+      "id": "d32da4f7-ceb9-41ba-b835-574e26cfa7e5",
+      "name": "Corrigindo formato da mensagem"
+    },
+    {
+      "parameters": {
+        "url": "https://atos-capital-backend-docker.onrender.com/api/auth/whatsapp_numbers/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2180,
+        0
+      ],
+      "id": "06b92a4c-38a6-4f33-8ddb-3a244ef7d8c1",
+      "name": "GET - Whatsapp numbers"
+    },
+    {
+      "parameters": {
+        "jsCode": "const numeros = $input.first().json.numeros;\n\nconst numerosConvertidos = numeros.map(numero => {\n  // Remove o \"+\" do começo\n  let limpo = numero.replace('+', '');\n\n  // Remove o primeiro 9 após o DDD (assumindo DDI+DDD fixo = 5 dígitos)\n  // Exemplo: 5579999165932 → 55799165932\n  limpo = limpo.slice(0, 5) + limpo.slice(6);\n\n  return limpo + '@c.us';\n});\n\nreturn numerosConvertidos.map(numeroConvertido => {\n  return {\n    json: {\n      chatId: numeroConvertido\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2520,
+        0
+      ],
+      "id": "ca63424a-b81f-46d3-b072-c1912a6426d6",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fbe8d023-e647-4d4c-bcb5-29841a879153",
+              "name": "numerosTratados",
+              "value": "={{ $json.numeros }}@c.us",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2680,
+        0
+      ],
+      "id": "7c0c3384-8342-4188-8fc3-87c1788b49c0",
+      "name": "Pegando números formatados"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "974edfc5-45b8-4e9b-b17b-47a14c5fc8fb",
+              "name": "numeros",
+              "value": "={{ $json.whatsapp_numbers }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2340,
+        0
+      ],
+      "id": "c5da489e-5cdc-42bc-93df-e6d22fda2ba2",
+      "name": "Pegando números do banco remoto"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-preview-04-17",
+        "options": {
+          "temperature": 0.4
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        200
+      ],
+      "id": "39360cef-57e4-4674-91d8-b96237dfff68",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Gfa2NKXtel3FEJGa",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "content-type": "application/json",
+            "user-agent": "WAHA/2025.4.1",
+            "x-webhook-request-id": "01JWBV6NZGDT9HZ5NXWPADZKS0",
+            "x-webhook-timestamp": "1748449318895",
+            "content-length": "2428",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "host": "host.docker.internal:5678",
+            "connection": "keep-alive"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "id": "evt_01jwbv6nzfyf1mwtsrcdttc9np",
+            "timestamp": 1748449318895,
+            "event": "message",
+            "session": "default",
+            "metadata": {},
+            "me": {
+              "id": "557999165932@c.us",
+              "pushName": "William Andrade🤙🏽",
+              "jid": "557999165932:71@s.whatsapp.net"
+            },
+            "payload": {
+              "id": "false_557996627815@c.us_3EB0B378162B0AF4223FB9",
+              "timestamp": 1748449319,
+              "from": "557996627815@c.us",
+              "fromMe": false,
+              "source": "app",
+              "body": "Entendi que você está procurando por informações de vendas! Eu posso ajudar com isso.\n\nQual tipo de informação você está procurando? Quer saber qual loja vendeu mais hoje, o total de vendas no mês ou a previsão de vendas para o mês?",
+              "to": null,
+              "participant": null,
+              "hasMedia": false,
+              "media": null,
+              "ack": 2,
+              "ackName": "DEVICE",
+              "replyTo": null,
+              "_data": {
+                "Info": {
+                  "Chat": "557996627815@s.whatsapp.net",
+                  "Sender": "557996627815:22@s.whatsapp.net",
+                  "IsFromMe": false,
+                  "IsGroup": false,
+                  "BroadcastListOwner": "",
+                  "ID": "3EB0B378162B0AF4223FB9",
+                  "ServerID": 0,
+                  "Type": "text",
+                  "PushName": "557996627815",
+                  "Timestamp": "2025-05-28T16:21:59Z",
+                  "Category": "",
+                  "Multicast": false,
+                  "MediaType": "",
+                  "Edit": "",
+                  "MsgBotInfo": {
+                    "EditType": "",
+                    "EditTargetID": "",
+                    "EditSenderTimestampMS": "0001-01-01T00:00:00Z"
+                  },
+                  "MsgMetaInfo": {
+                    "TargetID": "",
+                    "TargetSender": ""
+                  },
+                  "VerifiedName": null,
+                  "DeviceSentMeta": null
+                },
+                "Message": {
+                  "extendedTextMessage": {
+                    "text": "Entendi que você está procurando por informações de vendas! Eu posso ajudar com isso.\n\nQual tipo de informação você está procurando? Quer saber qual loja vendeu mais hoje, o total de vendas no mês ou a previsão de vendas para o mês?",
+                    "contextInfo": {
+                      "expiration": 0,
+                      "ephemeralSettingTimestamp": 1711037918,
+                      "disappearingMode": {
+                        "initiator": 0,
+                        "trigger": 1,
+                        "initiatedByMe": false
+                      }
+                    }
+                  }
+                },
+                "IsEphemeral": false,
+                "IsViewOnce": false,
+                "IsViewOnceV2": false,
+                "IsViewOnceV2Extension": false,
+                "IsDocumentWithCaption": false,
+                "IsLottieSticker": false,
+                "IsEdit": false,
+                "SourceWebMsg": null,
+                "UnavailableRequestID": "",
+                "RetryCount": 0,
+                "NewsletterMeta": null,
+                "RawMessage": {
+                  "extendedTextMessage": {
+                    "text": "Entendi que você está procurando por informações de vendas! Eu posso ajudar com isso.\n\nQual tipo de informação você está procurando? Quer saber qual loja vendeu mais hoje, o total de vendas no mês ou a previsão de vendas para o mês?",
+                    "contextInfo": {
+                      "expiration": 0,
+                      "ephemeralSettingTimestamp": 1711037918,
+                      "disappearingMode": {
+                        "initiator": 0,
+                        "trigger": 1,
+                        "initiatedByMe": false
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "environment": {
+              "version": "2025.4.1",
+              "engine": "GOWS",
+              "tier": "CORE",
+              "browser": null
+            }
+          },
+          "webhookUrl": "http://host.docker.internal:5678/webhook-test/webhook",
+          "executionMode": "test"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "dados",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Consulta para verificar o valor da venda do dia atual está preenchida",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "dados": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "GET - Whatsapp numbers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "visualizar mensagem": {
+      "main": [
+        [
+          {
+            "node": "enviar mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consulta para verificar o valor da venda do dia atual está preenchida": {
+      "main": [
+        [
+          {
+            "node": "Formatando dados vindos do banco",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatando dados vindos do banco": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Corrigindo formato da mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Corrigindo formato da mensagem": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET - Whatsapp numbers": {
+      "main": [
+        [
+          {
+            "node": "Pegando números do banco remoto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Pegando números formatados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pegando números formatados": {
+      "main": [
+        [
+          {
+            "node": "visualizar mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pegando números do banco remoto": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v0",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "f050c5a5-7e3c-4b4a-b21c-0809825bb5f1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d1ec179c2e2d8206215debb43dd23592b0fea90b6dc9de9c7df49d6a6e8613be"
+  },
+  "id": "tAVHyKA48Ysqg6n6",
+  "tags": []
+}

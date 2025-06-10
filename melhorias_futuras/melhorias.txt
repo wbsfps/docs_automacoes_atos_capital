@@ -1,0 +1,1 @@
+A própria IA gerar o SQL, baseado na mensagem usuário, com isso a resposta do AI Agent ficará mais rápida

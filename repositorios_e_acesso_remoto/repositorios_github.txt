@@ -1,0 +1,2 @@
+n8n - https://github.com/wbsfps/n8n-deploy
+waha - https://github.com/wbsfps/waha_deploy

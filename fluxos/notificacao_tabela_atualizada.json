@@ -1,0 +1,332 @@
+{
+  "name": "notificacao_tabela_atualizada",
+  "nodes": [
+    {
+      "parameters": {
+        "batchSize": "={{ $json.numeros.length }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        320,
+        -20
+      ],
+      "id": "32f61ecd-18a1-4513-9053-a61a8fcb1839",
+      "name": "SplitInBatches"
+    },
+    {
+      "parameters": {
+        "url": "https://atos-capital-backend-docker.onrender.com/api/auth/whatsapp_numbers/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -100,
+        -20
+      ],
+      "id": "7027fd08-6dc4-4be2-b990-d48276b53948",
+      "name": "GET - Whatsapp numbers"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "={{ $json.name }}",
+        "chatId": "={{ $('Code').item.json.chatId }}",
+        "reply_to": "=",
+        "text": "=As informações referentes ao dia {{ $('Consulta para verificar o valor da venda do dia atual está preenchida').item.json.dtVenda.toDateTime().format('dd/MM/yyyy') }} estão atualizadas!",
+        "requestOptions": {}
+      },
+      "type": "@devlikeapro/n8n-nodes-waha.WAHA",
+      "typeVersion": 202502,
+      "position": [
+        1100,
+        -20
+      ],
+      "id": "1cc74d98-4cf7-4866-a0ae-bd30fb5496bd",
+      "name": "Mensagem para usuário",
+      "credentials": {
+        "wahaApi": {
+          "id": "ZvtcjSRygP1xcHDZ",
+          "name": "WAHA account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const numeros = $input.first().json.numeros;\n\nconst numerosConvertidos = numeros.map(numero => {\n  // Remove o \"+\" do começo\n  let limpo = numero.replace('+', '');\n\n  // Remove o primeiro 9 após o DDD (assumindo DDI+DDD fixo = 5 dígitos)\n  // Exemplo: 5579999165932 → 55799165932\n  limpo = limpo.slice(0, 5) + limpo.slice(6);\n\n  return limpo + '@c.us';\n});\n\nreturn numerosConvertidos.map(numeroConvertido => {\n  return {\n    json: {\n      chatId: numeroConvertido\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        -20
+      ],
+      "id": "f767232b-08f8-448e-b8a4-4b84fed3ff77",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:3000/api/sessions",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        940,
+        -20
+      ],
+      "id": "5f9daa38-a7b2-4a7a-be4a-4c8e7892d940",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "path": "7fbc1984-1e95-4a7b-a868-bd99966d32ca",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -760,
+        80
+      ],
+      "id": "6302fdde-65fa-448d-8759-534f3e7509d8",
+      "name": "Webhook",
+      "webhookId": "7fbc1984-1e95-4a7b-a868-bd99966d32ca"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "use dbproinfo;\n\nSELECT dtVenda, vlVenda\nFROM tbVendasDashboard\nWHERE dtVenda = (\n    SELECT MAX(dtVenda)\n    FROM tbVendasDashboard\n    WHERE vlVenda IS NOT NULL\n)\nAND vlVenda IS NOT NULL;"
+      },
+      "type": "n8n-nodes-base.microsoftSql",
+      "typeVersion": 1.1,
+      "position": [
+        -580,
+        80
+      ],
+      "id": "5eccbcd2-2407-49c6-8131-07d5f083e412",
+      "name": "Consulta para verificar o valor da venda do dia atual está preenchida",
+      "credentials": {
+        "microsoftSql": {
+          "id": "QthryYB05SMhOSA7",
+          "name": "Microsoft SQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fbe8d023-e647-4d4c-bcb5-29841a879153",
+              "name": "numerosTratados",
+              "value": "={{ $json.numeros }}@c.us",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        760,
+        -20
+      ],
+      "id": "5ffa962a-bab6-4459-b816-acb94de2a8a0",
+      "name": "Pegando números formatados"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "974edfc5-45b8-4e9b-b17b-47a14c5fc8fb",
+              "name": "numeros",
+              "value": "={{ $json.whatsapp_numbers }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        120,
+        -20
+      ],
+      "id": "db77f833-99d2-4b4f-b680-393b96cff82c",
+      "name": "Pegando números do banco remoto"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8e6b3b93-1f91-499f-b246-ddb5695d60e2",
+              "leftValue": "={{ $json.vlVenda }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -340,
+        80
+      ],
+      "id": "0e878b30-3696-4d85-acf2-138fa232c990",
+      "name": "Verfica se o valor da venda não é nulo"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        180
+      ],
+      "id": "48a4cf82-d69b-48dd-a6f9-36b701af8b84",
+      "name": "Finializa o processo"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "SplitInBatches": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET - Whatsapp numbers": {
+      "main": [
+        [
+          {
+            "node": "Pegando números do banco remoto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Pegando números formatados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Mensagem para usuário",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Consulta para verificar o valor da venda do dia atual está preenchida",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consulta para verificar o valor da venda do dia atual está preenchida": {
+      "main": [
+        [
+          {
+            "node": "Verfica se o valor da venda não é nulo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pegando números formatados": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pegando números do banco remoto": {
+      "main": [
+        [
+          {
+            "node": "SplitInBatches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verfica se o valor da venda não é nulo": {
+      "main": [
+        [
+          {
+            "node": "GET - Whatsapp numbers",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Finializa o processo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b4ba9d85-590f-451f-8e1b-cb603e780460",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d1ec179c2e2d8206215debb43dd23592b0fea90b6dc9de9c7df49d6a6e8613be"
+  },
+  "id": "3bJnsrf66idVQRFC",
+  "tags": []
+}

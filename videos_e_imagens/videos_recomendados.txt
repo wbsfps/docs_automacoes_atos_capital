@@ -1,0 +1,4 @@
+Os links abaixo, foram os vídeos vistos para o desenvolvimento para ambas as automações, caso tenham alguma dúvida no processo de implementação remota ou local podem consultá-los
+
+- [Como criar chatbot no WhatsApp com WAHA e n8n] https://youtu.be/KkKlfAb3TSI?si=6i5xk-W4o2X8IPy5
+- [Automatizando notificações com n8n e Webhooks] https://youtu.be/SJuEeAuiuDE?si=DaeSfr1M6nHzyZ7J

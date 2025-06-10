@@ -1,0 +1,292 @@
+type: collection.insomnia.rest/5.0
+name: Unit
+meta:
+  id: wrk_9fd56f252ebc4d729c2d0f6a63d27697
+  created: 1714843936748
+  modified: 1726967690255
+collection:
+  - name: AtosCapital
+    meta:
+      id: fld_fa3d316df14145b0965a4d564d66fde5
+      created: 1742433125647
+      modified: 1742433125647
+      sortKey: -1742433125647
+    children:
+      - name: n8n + waha + whatsapp
+        meta:
+          id: fld_8bd71b2ee55a42f8af72e71f744b334c
+          created: 1745587727086
+          modified: 1745587727086
+          sortKey: -1745587727086
+        children:
+          - name: notificacao_tabela_atualizada
+            meta:
+              id: fld_cd23a117e26441d28d2c16df5714eeab
+              created: 1747918213102
+              modified: 1747918213102
+              sortKey: -1747918213102
+            children:
+              - name: render
+                meta:
+                  id: fld_3ccc6678ba2e426d8dc30e0d53a5c093
+                  created: 1748097801177
+                  modified: 1748097801177
+                  sortKey: -1748097801177
+                children:
+                  - url: https://n8n-deploy-7v1s.onrender.com/webhook-test/7fbc1984-1e95-4a7b-a868-bd99966d32ca
+                    name: webhook production - render
+                    meta:
+                      id: req_092f19a7e9cd40e98d13626e024f4894
+                      created: 1747916467540
+                      modified: 1748097816803
+                      isPrivate: false
+                      sortKey: -1748097811933
+                    method: GET
+                    headers:
+                      - name: User-Agent
+                        value: insomnia/11.1.0
+                    settings:
+                      renderRequestBody: true
+                      encodeUrl: true
+                      followRedirects: global
+                      cookies:
+                        send: true
+                        store: true
+                      rebuildPath: true
+                  - url: https://n8n-deploy-7v1s.onrender.com/webhook-test/7fbc1984-1e95-4a7b-a868-bd99966d32ca
+                    name: webhook test - render
+                    meta:
+                      id: req_24c9b9142b4d4b96b8d3e3a5c96dfad0
+                      created: 1747917259983
+                      modified: 1748097811801
+                      isPrivate: false
+                      sortKey: -1748097811733
+                    method: GET
+                    headers:
+                      - name: User-Agent
+                        value: insomnia/11.1.0
+                    settings:
+                      renderRequestBody: true
+                      encodeUrl: true
+                      followRedirects: global
+                      cookies:
+                        send: true
+                        store: true
+                      rebuildPath: true
+                  - url: https://waha-deploy.onrender.com/api/sessions
+                    name: get session
+                    meta:
+                      id: req_fd16c7f54ef04f0881a0cb520b219760
+                      created: 1748097623705
+                      modified: 1748097814896
+                      isPrivate: false
+                      sortKey: -1748097811833
+                    method: GET
+                    headers:
+                      - name: User-Agent
+                        value: insomnia/11.1.0
+                    settings:
+                      renderRequestBody: true
+                      encodeUrl: true
+                      followRedirects: global
+                      cookies:
+                        send: true
+                        store: true
+                      rebuildPath: true
+                  - url: https://waha-deploy.onrender.com/api/sessions
+                    name: get status
+                    meta:
+                      id: req_218e54fb0e4749d7ac427b4e1f00ca8a
+                      created: 1748099689848
+                      modified: 1748099750759
+                      isPrivate: false
+                      sortKey: -1748097811783
+                    method: GET
+                    headers:
+                      - name: User-Agent
+                        value: insomnia/11.1.0
+                    settings:
+                      renderRequestBody: true
+                      encodeUrl: true
+                      followRedirects: global
+                      cookies:
+                        send: true
+                        store: true
+                      rebuildPath: true
+              - name: docker
+                meta:
+                  id: fld_5ccf5d35824248d39ee26a395a1b8640
+                  created: 1748097828707
+                  modified: 1748097828707
+                  sortKey: -1748097828707
+              - url: http://localhost:5678/webhook-test/7fbc1984-1e95-4a7b-a868-bd99966d32ca
+                name: Rodar fluxo (webhook)
+                meta:
+                  id: req_974c5b88d5d04e5690abeb4c71937dfc
+                  created: 1747347450866
+                  modified: 1748458044294
+                  isPrivate: false
+                  sortKey: -1748097814942
+                method: GET
+                headers:
+                  - name: User-Agent
+                    value: insomnia/11.1.0
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+          - name: chatbot_usuario
+            meta:
+              id: fld_02827f3f802d4e4e9c8d19219643b912
+              created: 1747918252701
+              modified: 1747918252701
+              sortKey: -1747918252701
+            children:
+              - url: http://host.docker.internal:5678/webhook-test/webhook
+                name: rodar fluxo (webhook)
+                meta:
+                  id: req_5b5d45de00b64d59ae73338ac6433a3b
+                  created: 1748393561917
+                  modified: 1748448233540
+                  isPrivate: false
+                  sortKey: -1748393561917
+                method: POST
+                headers:
+                  - name: User-Agent
+                    value: insomnia/11.1.0
+                settings:
+                  renderRequestBody: true
+                  encodeUrl: true
+                  followRedirects: global
+                  cookies:
+                    send: true
+                    store: true
+                  rebuildPath: true
+      - name: backend
+        meta:
+          id: fld_e6480e6998c045e4a6be837df7487664
+          created: 1745587741584
+          modified: 1745587741584
+          sortKey: -1745587741584
+        children:
+          - url: https://atos-capital-backend-docker.onrender.com/api/auth/token/
+            name: Acesso
+            meta:
+              id: req_40be801f53a64745814aecc28ec340a5
+              created: 1742433130803
+              modified: 1746044472297
+              isPrivate: false
+              sortKey: -1745587747529
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"username": "atos",
+                	"password": "admin"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/10.3.0
+            authentication:
+              type: none
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://127.0.0.1:8000/api/auth/token/refresh/
+            name: Obter Token
+            meta:
+              id: req_00eb66cc110a425e8647c1f7969459bd
+              created: 1742433264043
+              modified: 1745587751197
+              isPrivate: false
+              sortKey: -1745587747629
+            method: POST
+            body:
+              mimeType: application/json
+              text: >-
+                {
+                	"refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0MjU5NDExMCwiaWF0IjoxNzQyNTA3NzEwLCJqdGkiOiJjNmI1MTE5MmM1NjI0MGRiOGZmYzViMzU1YzgyNjRhNSIsInVzZXJfaWQiOjF9.bZejLwzBrWuTbrIuBlYN9TWouuiHutyeM8CQ4VM_4l8"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/10.3.0
+            authentication:
+              type: bearer
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: https://atos-capital-backend-docker.onrender.com/api/auth/whatsapp_numbers
+            name: whatsapp numbers
+            meta:
+              id: req_69d7007d0ec84b6283d58056e7ab1d96
+              created: 1746045203230
+              modified: 1749068500098
+              isPrivate: false
+              sortKey: -1745587747729
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/11.0.2
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: https://atos-capital-backend-docker.onrender.com/api/daily_sale/require_daily_sales_by_date/2025-01-01/
+            name: Dia de venda
+            meta:
+              id: req_83070cd64b094d689c5f9903922b6068
+              created: 1747792552036
+              modified: 1747793033433
+              isPrivate: false
+              sortKey: -1745587747579
+            method: POST
+            headers:
+              - name: User-Agent
+                value: insomnia/11.1.0
+            authentication:
+              type: bearer
+              token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ3Nzk2MjU3LCJpYXQiOjE3NDc3OTI2NTcsImp0aSI6ImVjMjI1ODE1ZGE5MjQxMWZiYmFlYjgwOTRkNmE3NGQwIiwidXNlcl9pZCI6MX0.zmOZTgluS4_kD9EMP3xq846fP7kTJIHZXb1ZQrHLZTY
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_382445f67df12c8f9595ed769cf4251d50505d2a
+    created: 1724954677351
+    modified: 1724954677351
+environments:
+  name: Base Environment
+  meta:
+    id: env_382445f67df12c8f9595ed769cf4251d50505d2a
+    created: 1714843936751
+    modified: 1724954677342
+    isPrivate: false

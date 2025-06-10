@@ -1,0 +1,8 @@
+n8n - https://n8n-deploy-7v1s.onrender.com/
+
+Credenciais
+email -> email@email.com
+password -> gJRk4Zr7ydLfK5e
+
+
+waha - https://waha-deploy.onrender.com/dashboard
