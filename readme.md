@@ -38,7 +38,7 @@ Automatiza o atendimento de usuários no WhatsApp, respondendo perguntas relacio
 4. **Consulta SQL**: Recupera dados da tabela `tbVendasDashboard` com os últimos valores de vendas.
 5. **Formatação**: Transforma os dados SQL em texto formatado.
 6. **Merge**: Junta a mensagem do usuário com os dados formatados.
-7. **IA com Langchain + Groq**: Usa linguagem natural para gerar respostas (ex: "qual loja vendeu mais hoje?").
+7. **IA com Langchain + Gemini**: Usa linguagem natural para gerar respostas (ex: "qual loja vendeu mais hoje?").
 8. **Memória com Redis**: Armazena o histórico da conversa por 1 hora.
 9. **Envia resposta**: Utiliza o nó WAHA para enviar a mensagem gerada pela IA ao usuário.
 10. **GET números do backend**: Recupera lista de números que devem receber notificações.
@@ -79,7 +79,7 @@ Envia uma mensagem automática no WhatsApp para diversos números informando que
 
 - [n8n](https://n8n.io/)
 - [WAHA API](https://waha.devlikeapro.com/)
-- [LangChain + Groq](https://www.langchain.com/)
+- [LangChain + Gemini](https://www.langchain.com/)
 - [Redis](https://redis.io/)
 - [SQL Server](https://www.microsoft.com/en-us/sql-server)
 
@@ -92,7 +92,7 @@ Certifique-se de configurar corretamente as credenciais no n8n:
 - **WAHA API Credentials**
 - **Microsoft SQL Database**
 - **Redis Connection**
-- **Groq API Key** (para IA)
+- **Gemini API Key** (para IA)
 
 ---
 
